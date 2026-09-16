@@ -1,0 +1,170 @@
+openapi: 3.0.0
+info:
+    title: "social net for trevel"
+    version: 0.0.1
+servers:
+  - url: http://localhost:8080/api/v1
+    description: "Dev server"
+paths:
+  /post:
+    post:
+      summary: Создать пост
+      tags:
+        - Post
+      requestBody: 
+        required: true
+        content: 
+          application/json: 
+            schema: 
+              type: object
+              required: 
+                - user_id
+                - text
+                - imgs
+                - geo_id
+              properties:
+                user_id:
+                  type: string
+                text:
+                  type: string
+                imgs:
+                  type: array
+                  items: 
+                    type: string
+                geo_id:
+                  type: string
+            example:
+              request:
+                value:
+                  user_id: "id"
+                  texr: "description"
+                  imgs: ["path/to/img1", "path/to/img2"]
+                  geo_id: "geo_id"
+      responses:
+        '200':
+          description: "Успешно создали пост"
+          content: 
+            application/json: 
+              schema: 
+                type: object
+                id:
+                  type: string
+                  description: id of the post
+        '400':
+          description: "bad request"
+        '500':
+          description: "Server error"
+
+  /post/{post_id}:
+    get:
+      summary: Метод получения поста
+      tags: 
+        - Post
+      parameters: 
+        - name: post_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses: 
+        '200':
+          description: "Успешно получили пост"
+          content: 
+            application/json:
+              schema: 
+                type: object
+                properties:
+                  post_id:
+                    type: string
+                    description: id of the post
+                  text:
+                    type: string
+                  img_urls:
+                    type: array
+                    items:
+                      type: string
+                      description: img url to download
+                  geo_id:
+                    type: string
+        '400':
+          description: "bad request"
+        '500':
+          description: "Server error"
+
+    delete:
+      summary: Метод удаления поста
+      parameters: 
+        - name: post_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses: 
+        '200':
+          description: "Успешно удалили пост"
+        '400':
+          description: "bad request"
+        '500':
+          description: "Server error"
+
+  /post/rating/{post_id}:
+    post:
+      tags: 
+        - Post
+      summary: Метод изменения райтинга поста (лайк)
+      parameters: 
+        - name: post_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: type
+          required: true
+          schema:
+            type: string
+      responses: 
+        '200':
+          description: "Успешно изменен рейтинг"
+        '400':
+          description: "bad request"
+        '500':
+          description: "Server error"
+
+  /comment:
+    post:
+      tags:
+        - Post
+      summary: "Метод прокомментировать пост"
+      requestBody: 
+        required: true
+        content: 
+          application/json: 
+            schema: 
+              type: object
+              required: 
+                - user_id
+                - text
+              properties:
+                user_id:
+                  type: string
+                text:
+                  type: string
+      responses:
+        '200':
+          description: "Успешно создали комметарий"
+          content: 
+            application/json: 
+              schema: 
+                type: object
+                id:
+                  type: string
+                  description: id of the comment
+        '400':
+          description: "bad request"
+        '500':
+          description: "Server error"
+
+
+
+
+
