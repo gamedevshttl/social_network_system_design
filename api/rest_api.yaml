@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
     title: "social net for trevel"
-    version: 0.0.1
+    version: 1.0.0
 servers:
   - url: http://localhost:8080/api/v1
     description: "Dev server"
@@ -163,8 +163,3 @@ paths:
           description: "bad request"
         '500':
           description: "Server error"
-
-
-
-
-
