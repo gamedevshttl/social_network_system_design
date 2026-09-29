@@ -106,3 +106,10 @@
 
         Требуется 17 SD nVMe (4 TB, 10 000 IOPS, 3 GB/s), если изображения храним на AWS S3
 
+## Распределенное хранение данных
+    PgSQL
+        - asynk 
+        - Replication Factor 2 
+        - master-slave
+        - 2 disk by hosts = 9 shards * 2 = 18 hosts by 2 disks
+        - key based way by user_id
