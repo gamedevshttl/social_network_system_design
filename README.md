@@ -47,16 +47,18 @@
 ## Трафик
     - Post
         - id - 8B
-        - created_at - 8B
         - user_id - 8B
+        - place_id - 8B
+        - created_at - 8B
+        - title - 100B
         - text - 5000B = 5KB
         - images - 10 * 500KB = 5000KB = 5MB
-        - geo_id - 8B
   
         Размер всего поста мета + медиа(фото) ~ 5МВ/s
         Размер мета (поста без медиа) ~ 5 KB/s
         
-        write: 23 * 5МВ = 115 MB/s
+        write: весь пост - 23 * 5МВ = 115 MB/s
+        write: метаданные - 23 * 5 KB/s = 115 KB/s
         read: 20 * 1158 * 5 KB = 115 MB/s пагинация по 20 постов
 
     - Комментарий
@@ -81,3 +83,33 @@
         - follow_user_id
 
         write: 23 * 16 = 368B/s
+
+## Capacity
+    Запись всего поста
+        - 115 MB/s * 86400 * 365 = 3626 TB
+
+    Запись метаданных (post, Комментарий, Лайк) - 115 KB/s + 29KB/s + 18.5KB/s
+        - 162.5 KB/s * 86400 * 365 = 5.1 TB
+
+    Расчет дисков 
+        - HDD (2 TB, 100 IOPS, 100 MB/s):
+            Capacity 5.1 TB / 2 TD = 3 disk
+            iops  162500 / 100 = 163 disk
+
+        - SSD SATA (10 TB, 1 000 IOPS, 500 MB/s):
+            Capacity 5.1 TB / 10 TD = 1 disk
+            iops  162500 / 1000 = 163 disk
+
+        - SSD nVMe (4 TB, 10 000 IOPS, 3 GB/s):
+            Capacity 5.1 TB / 4 TD = 2 disk
+            iops  162500 / 10000 = 17 disk
+
+        Требуется 17 SD nVMe (4 TB, 10 000 IOPS, 3 GB/s), если изображения храним на AWS S3
+
+## Распределенное хранение данных
+    PgSQL
+        - asynk 
+        - Replication Factor 2 
+        - master-slave
+        - 2 disk by hosts = 9 shards * 2 = 18 hosts by 2 disks
+        - key based way by user_id
